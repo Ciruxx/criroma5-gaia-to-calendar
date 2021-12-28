@@ -1,4 +1,5 @@
 const run = require('../bin/run');
+// const run = require('../build');
 
 const event = {}
 const context = {callbackWaitsForEmptyEventLoop: false};

@@ -60,9 +60,9 @@ typings/
 # next.js build output
 .next
 
+# Custom
 .npmrc
-
 rows.json
-
 store.json
-
+.idea/aws.xml
+res/gaia-to-calendar-stack/**/build/

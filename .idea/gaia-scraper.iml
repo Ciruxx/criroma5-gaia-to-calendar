@@ -5,7 +5,8 @@
       <excludeFolder url="file://$MODULE_DIR$/temp" />
       <excludeFolder url="file://$MODULE_DIR$/.tmp" />
       <excludeFolder url="file://$MODULE_DIR$/tmp" />
-      <excludeFolder url="file://$MODULE_DIR$/lambda/logs" />
+      <excludeFolder url="file://$MODULE_DIR$/infrastructure/res/gaia-to-calendar-stack/gaia-to-calendar/logs" />
+      <excludeFolder url="file://$MODULE_DIR$/cdk.out" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

@@ -1,0 +1,33 @@
+{
+  "name": "gaia-to-calendar",
+  "bin": {
+    "run": "./bin/run.ts"
+  },
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "install:gtc:gtc": "cd res/gaia-to-calendar-stack/gaia-to-calendar && npm i",
+    "install:all": "npm i;npm run install:gtc:gtc;",
+    "build:gtc:gtc": "cd res/gaia-to-calendar-stack/gaia-to-calendar && npm run build",
+    "build:all": "npm run build:gtc:gtc",
+    "deploy": "env-cmd cdk deploy --require-approval never \\*",
+    "doctor": "env-cmd cdk doctor",
+    "destroy": "env-cmd cdk destroy --force \\*",
+    "cdk": "cdk"
+  },
+  "keywords": [],
+  "author": "Ciro Santillo <ciro.santillo@criroma5.it>",
+  "license": "ISC",
+  "dependencies": {
+    "aws-cdk-lib": "^2.3.0",
+    "aws-cdk": "^2.3.0",
+    "dotenv": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^16.11.8",
+    "env-cmd": "^10.1.0",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.2"
+  }
+}
