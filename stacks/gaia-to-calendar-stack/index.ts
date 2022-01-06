@@ -15,12 +15,7 @@ export class GaiaToCalendarStack extends cdk.Stack {
         super(scope, id, props);
         const {tags} = props;
 
-        const cdkLambda = buildLambda(this, "./res/gaia-to-calendar-stack", "gaia-to-calendar", {
-            GAIA_USERNAME: props.gaiaUsername,
-            GAIA_PASSWORD: props.gaiaPassword
-        });
-
-        new dynamo.Table(this, `${id}-gaia-to-calendar-table`, {
+        const table = new dynamo.Table(this, `${id}-gaia-to-calendar-table`, {
             billingMode: dynamo.BillingMode.PAY_PER_REQUEST,
             partitionKey: {
                 name: "gaiaId",
@@ -29,11 +24,18 @@ export class GaiaToCalendarStack extends cdk.Stack {
             removalPolicy: (tags!.Environment !== 'prod' && tags!.Environment !== 'tst') ? cdk.RemovalPolicy.DESTROY : undefined, // Not recommended for production code
         });
 
+        const cdkLambda = buildLambda(this, "./res/gaia-to-calendar-stack", "gaia-to-calendar", {
+            GAIA_USERNAME: props.gaiaUsername,
+            GAIA_PASSWORD: props.gaiaPassword,
+            DYNAMO_TABLE_NAME: table.tableName,
+            PERIOD: "month"
+        },"",256,cdk.Duration.minutes(2));
+
         const target = new eventsTargets.LambdaFunction(cdkLambda);
 
         new events.Rule(this, `${cdkLambda.functionName.toLowerCase()}-schedule`, {
             enabled: true,
-            schedule: events.Schedule.cron({minute: '0/15'}), // Every 15 minutes
+            schedule: events.Schedule.cron({minute: '0/30'}), // Every 30 minutes
             targets: [target]
         });
 

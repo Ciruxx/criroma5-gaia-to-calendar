@@ -16,7 +16,7 @@ export function buildWebPackLambda(scope: Construct, lambdasRoot: string, name: 
         logRetention: RetentionDays.ONE_MONTH
     });
 }
-export function buildLambda(scope: Construct, lambdasRoot: string, name: string, environment: any, context = "", memorySize = 128, cdkLambdaLayers: lambda.LayerVersion[] = []) {
+export function buildLambda(scope: Construct, lambdasRoot: string, name: string, environment: any, context = "", memorySize = 128, timeout = cdk.Duration.seconds(10), cdkLambdaLayers: lambda.LayerVersion[] = []) {
     let directories = getDirectories(lambdasRoot);
     directories = directories.filter((e: any) => e !== name).filter((e: any) => e !== 'utils'); // Escludi tutto tranne la lambda da caricare e utils
     const lambdaFunction = new lambda.Function(scope, `${name}Lambda${context}`, {
@@ -26,7 +26,7 @@ export function buildLambda(scope: Construct, lambdasRoot: string, name: string,
             exclude: directories
         }),
         memorySize,
-        timeout: cdk.Duration.seconds(10),
+        timeout,
         environment,
         layers: cdkLambdaLayers,
         logRetention: RetentionDays.ONE_MONTH

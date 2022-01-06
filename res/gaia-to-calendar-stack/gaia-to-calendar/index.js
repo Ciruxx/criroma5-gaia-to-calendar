@@ -1,4 +1,6 @@
-const {auth} = require("./etc/conf");
+const {DateTime} = require("luxon");
+
+const {auth, period} = require("./etc/conf");
 const {login} = require("./src/auth");
 const {scraper} = require("./src/scraper");
 const {synchronizer} = require("./src/synchronizer");
@@ -14,13 +16,17 @@ async function handle(event, context) {
     } catch (e) {
         return e;
     }
+    console.log(cookies);
 
     const {cookiesession1, csrftoken, sessionid} = cookies;
 
-    console.log(cookies);
+    const startDate = DateTime.local().setLocale('it-IT').startOf(period).toISO();
+    console.log(startDate);
+    const endDate = DateTime.local().setLocale('it-IT').endOf(period).toISO(); //"2022-01-09T00:00:00.000Z"
+    console.log(endDate);
     let rows = [];
     try {
-        rows = await scraper("2021-12-01T00:00:00.000Z", "2021-12-01T00:00:00.000Z", cookiesession1, csrftoken, sessionid);
+        rows = await scraper(startDate, endDate, cookiesession1, csrftoken, sessionid);
     } catch (e) {
         return e;
     }
