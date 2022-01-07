@@ -4,13 +4,13 @@ import * as fs from "fs";
 import { Construct } from 'constructs';
 import {RetentionDays} from "aws-cdk-lib/aws-logs";
 
-export function buildWebPackLambda(scope: Construct, lambdasRoot: string, name: string, environment: any, context = "", memorySize = 128, cdkLambdaLayers: lambda.LayerVersion[] = []) {
+export function buildWebPackLambda(scope: Construct, lambdasRoot: string, name: string, environment: any, context = "", memorySize = 128, timeout = cdk.Duration.seconds(10), cdkLambdaLayers: lambda.LayerVersion[] = []) {
     return new lambda.Function(scope, `${name}Lambda${context}`, {
         runtime: lambda.Runtime.NODEJS_12_X,
         handler: `index.handler`,
         code: lambda.Code.fromAsset(`${lambdasRoot}/${name}/build`),
         memorySize,
-        timeout: cdk.Duration.seconds(10),
+        timeout,
         environment,
         layers: cdkLambdaLayers,
         logRetention: RetentionDays.ONE_MONTH

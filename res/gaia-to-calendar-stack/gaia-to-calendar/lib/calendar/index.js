@@ -11,16 +11,20 @@ const SCOPES = ['https://www.googleapis.com/auth/calendar.events'];
 const CREDENTIALS_PATH = path.join(__dirname, 'credentials.json');
 const TOKEN_PATH = path.join(__dirname, 'token.json');
 
-async function getOAuth2Client() {
-    let content = null;
-    try {
-        content = await readfile(CREDENTIALS_PATH)
-    } catch (e) {
-        console.log('Error loading client secret file:', e);
-        return e;
-    }
+async function getOAuth2Client(client_id, project_id, auth_uri, token_uri, auth_provider_x509_cert_url, client_secret, redirect_uris) {
+    const credentials = {
+        installed: {
+            client_id,
+            project_id,
+            auth_uri,
+            token_uri,
+            auth_provider_x509_cert_url,
+            client_secret,
+            redirect_uris,
+        }
+    };
 
-    return authorize(JSON.parse(content))
+    return authorize(credentials)
 }
 
 /**
@@ -64,11 +68,7 @@ async function getAccessToken(oAuth2Client) {
             oAuth2Client.getToken(code, (err, token) => {
                 if (err) return console.error('Error retrieving access token', err);
                 oAuth2Client.setCredentials(token);
-                // Store the token to disk for later program executions
-                fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
-                    if (err) return console.error(err);
-                    console.log('Token stored to', TOKEN_PATH);
-                });
+                globalToken = token;
                 resolve(oAuth2Client);
             });
         });

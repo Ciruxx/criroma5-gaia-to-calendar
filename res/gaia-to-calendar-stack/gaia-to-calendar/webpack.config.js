@@ -16,7 +16,6 @@ module.exports = {
   plugins: [
     new CopyPlugin({
       patterns: [
-        { from: "./lib/calendar/credentials.json", to: "credentials.json" },
         { from: "./lib/calendar/token.json", to: "token.json" },
       ],
     }),

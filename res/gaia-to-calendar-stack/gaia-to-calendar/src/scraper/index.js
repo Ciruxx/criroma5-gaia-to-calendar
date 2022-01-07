@@ -14,10 +14,10 @@ async function scraper(startDate, endDate, cookiesession1, csrftoken, sessionid)
             'authority': ' gaia.cri.it',
             'Cookie': `cookiesession1=${cookiesession1}; csrftoken=${csrftoken}; sessionid=${sessionid}`
         },
-        filePath: './images/',
-        concurrency: 10,//Maximum concurrent jobs. More than 10 is not recommended.Default is 3.
-        maxRetries: 3,//The scraper will try to repeat a failed request few times(excluding 404). Default is 5.
-        logPath: './logs/'//Highly recommended: Creates a friendly JSON for each operation object, with all the relevant data.
+        // filePath: './images/',
+        // concurrency: 10,//Maximum concurrent jobs. More than 10 is not recommended.Default is 3.
+        // maxRetries: 3,//The scraper will try to repeat a failed request few times(excluding 404). Default is 5.
+        // logPath: './logs/'//Highly recommended: Creates a friendly JSON for each operation object, with all the relevant data.
     }
     const scraper = new Scraper(config);
     const root = new Root();//The root object fetches the startUrl, and starts the process.
@@ -66,7 +66,7 @@ async function scraper(startDate, endDate, cookiesession1, csrftoken, sessionid)
     })
 
     // console.log(rows[1]);
-    fs.writeFile('./rows.json', JSON.stringify(rows), () => {})
+    // fs.writeFile('./rows.json', JSON.stringify(rows), () => {})
     return rows
 }
 

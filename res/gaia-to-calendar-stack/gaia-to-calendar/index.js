@@ -32,7 +32,7 @@ async function handle(event, context) {
     }
 
     try {
-        await synchronizer(rows);
+        await synchronizer(rows, endDate);
     } catch (e) {
         return e;
     }

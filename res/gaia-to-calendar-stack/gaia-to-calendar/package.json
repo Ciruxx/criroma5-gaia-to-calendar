@@ -12,6 +12,7 @@
   "author": "Ciro Santillo <ciro.santillo@criroma5.it>",
   "license": "ISC",
   "dependencies": {
+    "aws-sdk": "^2.1052.0",
     "axios": "^0.24.0",
     "copy-webpack-plugin": "^10.2.0",
     "dotenv": "^10.0.0",
@@ -25,9 +26,9 @@
     "set-cookie-parser": "^2.4.8"
   },
   "devDependencies": {
-    "webpack": "^5.65.0",
-    "webpack-cli": "^4.9.1",
     "copy-webpack-plugin": "^10.2.0",
-    "env-cmd": "^10.1.0"
+    "env-cmd": "^10.1.0",
+    "webpack": "^5.65.0",
+    "webpack-cli": "^4.9.1"
   }
 }

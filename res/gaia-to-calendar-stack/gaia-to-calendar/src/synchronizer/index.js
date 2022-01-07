@@ -1,10 +1,20 @@
 const {DateTime} = require("luxon");
 const md5 = require('md5');
-const {getOAuth2Client, createEvent, updateEvent,listEvents} = require("../../lib/calendar");
-const cache = require('node-file-cache').create();
+const {getOAuth2Client, createEvent, updateEvent, listEvents} = require("../../lib/calendar");
+const DynamoDB = require("../../lib/DynamoDB");
+const {googleCredentials,dynamoTableName} = require("../../etc/conf");
 
-async function synchronizer(rows) {
-    const oAuth2Client = await getOAuth2Client();
+async function synchronizer(rows, endDate) {
+    const {
+        client_id,
+        project_id,
+        auth_uri,
+        token_uri,
+        auth_provider_x509_cert_url,
+        client_secret,
+        redirect_uris
+    } = googleCredentials;
+    const oAuth2Client = await getOAuth2Client(client_id, project_id, auth_uri, token_uri, auth_provider_x509_cert_url, client_secret, redirect_uris);
 
     for (const row of rows) {
         for (const event of row) {
@@ -44,7 +54,14 @@ async function synchronizer(rows) {
             };
 
             const dynamoId = md5(`${calendarEvent.summary}${calendarEvent.isoStart}${calendarEvent.isoEnd}`);
-            const refs = cache.get(dynamoId);
+
+            const dynamoRes = await DynamoDB.get({
+                TableName : dynamoTableName,
+                Key: {
+                    gaiaId: dynamoId,
+                }
+            });
+            const refs = dynamoRes.Item;
 
             if (refs != null) {
                 calendarEvent["eventId"] = refs.calendarId;
@@ -56,23 +73,26 @@ async function synchronizer(rows) {
                 }
                 console.log(res);
                 if (res.status !== 200 || res.data.status === "cancelled") {
-                    cache.expire(dynamoId);
-                    await createEventAndSet(oAuth2Client, calendarEvent, dynamoId);
+                    await createEventAndSet(oAuth2Client, calendarEvent, dynamoId, endDate);
                 }
             } else {
-                await createEventAndSet(oAuth2Client, calendarEvent, dynamoId);
+                await createEventAndSet(oAuth2Client, calendarEvent, dynamoId, endDate);
             }
         }
     }
 }
 
-async function createEventAndSet(oAuth2Client, calendarEvent, dynamoId) {
-    const res = await createEvent(oAuth2Client, calendarEvent); // TODO ci vuole un database per salvare gli id restituiti, serviranno per le update
+async function createEventAndSet(oAuth2Client, calendarEvent, dynamoId, endDate) {
+    const res = await createEvent(oAuth2Client, calendarEvent);
     const calendarId = res.data.id;
-    cache.set(dynamoId, {
-        gaiaId: dynamoId,
-        calendarId,
-        ttl: calendarEvent.isoEnd,
+
+    await DynamoDB.put({
+        TableName: dynamoTableName,
+        Item: {
+            gaiaId: dynamoId,
+            calendarId,
+            ttl: endDate,
+        }
     });
 }
 
