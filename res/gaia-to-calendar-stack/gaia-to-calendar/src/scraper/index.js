@@ -22,13 +22,16 @@ async function scraper(startDate, endDate, cookiesession1, csrftoken, sessionid)
     const scraper = new Scraper(config);
     const root = new Root();//The root object fetches the startUrl, and starts the process.
 
-    const row = new CollectContent('tr', {name: 'row'});//"Collects" the text from each H1 element.
+    const row = new CollectContent('tr', {name: 'row'});//"Collects" the text from each tr element.
 
     root.addOperation(row);
 
     await scraper.scrape(root);
 
-    let rows = row.getData();//Will return an array of all article objects(from all categories), each
+    let rows = row.getData();
+    console.log("RAW rows:");
+    console.log(rows.length);
+
     const months = getShortMonths();
 
     rows = rows.map(row => {
@@ -45,7 +48,8 @@ async function scraper(startDate, endDate, cookiesession1, csrftoken, sessionid)
         const month = months.indexOf(cleanRowArray.shift().toLowerCase());
         const year = new Date().getFullYear();
 
-        cleanRowArray = cleanRowArray.filter(e => e.length !== 1) // Remove single entries
+        cleanRowArray = cleanRowArray.filter(e => e.length !== 1 && e.length !== 2) // Remove single entries
+
         const res = [];
         const chunks = _.chunk(cleanRowArray, 6);
         for (const chunk of chunks) {
